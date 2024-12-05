@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class AngryShapes : MonoBehaviour
 {
+    public AngryShapeTypes shapeTypes = null;
+
     public float mass = 1;
     public float gravityScale = 0;
     public float grippyness = 0.5f;
@@ -14,11 +16,7 @@ public class AngryShapes : MonoBehaviour
 
     void Start()
     {
-        
-    }
-
-    void Update()
-    {
-        
+        shapeTypes = GetComponent<AngryShapeTypes>();
+        AngryFizziks.Instance.angryShapesList.Add(this);
     }
 }
