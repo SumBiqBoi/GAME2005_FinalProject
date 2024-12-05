@@ -10,5 +10,5 @@ public class AngryShapeTypes : MonoBehaviour
         Plane,
         Halfspace
     }
-    //public abstract Shape GetShape();
+    public abstract Shape GetShape();
 }
