@@ -14,6 +14,7 @@ public class AngryShapes : MonoBehaviour
     public Vector3 velocity = Vector3.zero;
     public Vector3 netForce = Vector3.zero;
 
+
     void Start()
     {
         shapeTypes = GetComponent<AngryShapeTypes>();
