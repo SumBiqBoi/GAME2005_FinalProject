@@ -83,7 +83,7 @@ public class AngryFizziks : MonoBehaviour
         {
             AngryShapes shapeA = angryShapesList[iA];
             
-            for (int iB = 0; iB < angryShapesList.Count; iB++)
+            for (int iB = iA + 1; iB < angryShapesList.Count; iB++)
             {
                 AngryShapes shapeB = angryShapesList[iB];
 
@@ -132,6 +132,9 @@ public class AngryFizziks : MonoBehaviour
                         float frictionMagnitude = Fn.magnitude * coefficientOfFriction;
 
                         Vector3 Ff = velARelativeToBProjectedOntoPlane.normalized * frictionMagnitude;
+
+                        correctedShapeA.netForce += Ff;
+                        correctedShapeB.netForce -= Ff;
                     }
                 }
             }
@@ -142,7 +145,7 @@ public class AngryFizziks : MonoBehaviour
     {
         Vector3 DisplacementBToA = sphereA.transform.position - sphereB.transform.position;
         float distance = DisplacementBToA.magnitude;
-        float overlap = (sphereA.radius + sphereB.radius) / distance;
+        float overlap = (sphereA.radius + sphereB.radius) - distance;
 
         if (overlap < 0)
         {
@@ -151,7 +154,7 @@ public class AngryFizziks : MonoBehaviour
 
         Vector3 collisionNormalBToA;
 
-        if (distance < 0.00001f)
+        if (distance < ridiculouslySmallNumber)
         {
             collisionNormalBToA = Vector3.up;
         }
@@ -192,7 +195,7 @@ public class AngryFizziks : MonoBehaviour
 
             if (overlap < 0)
             {
-                return new CollisionInfo(true, plane.Normal());
+                return new CollisionInfo(false, plane.Normal());
             }
 
             Vector3 mtv = plane.Normal() * overlap;
