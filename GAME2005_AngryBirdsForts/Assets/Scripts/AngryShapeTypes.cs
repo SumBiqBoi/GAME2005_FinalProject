@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AngryShapeTypes : MonoBehaviour
+public abstract class AngryShapeTypes : MonoBehaviour
 {
     public enum Shape
     {

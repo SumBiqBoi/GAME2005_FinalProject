@@ -32,15 +32,17 @@ public class AngryFizziks : MonoBehaviour
 
     public List<AngryShapes> angryShapesList = new List<AngryShapes>();
     public float dT = 0.02f;
+    public float ridiculouslySmallNumber = 0.00001f;
 
-    public Vector3 gravityAcceleration = new Vector3(0, -10, 0);
+    public Vector3 gravityAcceleration = new Vector3(0f, -10f, 0f);
 
     AngryShapes correctedShapeA;
     AngryShapes correctedShapeB;
 
     void FixedUpdate()
     {
-        
+        CollisionShape();
+        KinematicShape();
     }
 
     public Vector3 GetGravityForce(AngryShapes shape)
@@ -53,6 +55,11 @@ public class AngryFizziks : MonoBehaviour
         foreach (AngryShapes shape in angryShapesList)
         {
             Vector3 prevPos = shape.transform.position;
+
+            if (shape.isStatic)
+            {
+                continue;
+            }
 
             Vector3 Fg = GetGravityForce(shape);
             shape.netForce += Fg;
@@ -91,6 +98,38 @@ public class AngryFizziks : MonoBehaviour
                 else if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Sphere && shapeB.shapeTypes.GetShape() == AngrySphere.Shape.Plane)
                 {
                     collisionInfo = CollideSpherePlane((AngrySphere)shapeA.shapeTypes, (AngryPlane)shapeB.shapeTypes);
+                }
+                else if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Plane && shapeB.shapeTypes.GetShape() == AngrySphere.Shape.Sphere)
+                {
+                    correctedShapeA = shapeB;
+                    correctedShapeB = shapeA;
+                    collisionInfo = CollideSpherePlane((AngrySphere)shapeB.shapeTypes, (AngryPlane)shapeA.shapeTypes);
+                }
+
+                if (collisionInfo.didCollide)
+                {
+                    Vector3 Fg = GetGravityForce(correctedShapeA);
+
+                    float gravityDotNormal = Vector3.Dot(Fg, collisionInfo.normal);
+                    Vector3 gravityProjectedNormal = collisionInfo.normal * gravityDotNormal;
+                    Vector3 Fn = -gravityProjectedNormal;
+
+                    correctedShapeA.netForce += Fn;
+                    correctedShapeB.netForce -= Fn;
+
+                    Vector3 velARelativeToB = correctedShapeB.velocity - correctedShapeA.velocity;
+                    float velDotNormal = Vector3.Dot(velARelativeToB, collisionInfo.normal);
+                    Vector3 velProjectedNormal = collisionInfo.normal * velDotNormal;
+
+                    Vector3 velARelativeToBProjectedOntoPlane = velARelativeToB - velProjectedNormal;
+
+                    if (velARelativeToBProjectedOntoPlane.sqrMagnitude > ridiculouslySmallNumber)
+                    {
+                        float coefficientOfFriction = Mathf.Clamp01(correctedShapeA.grippyness * correctedShapeB.grippyness);
+                        float frictionMagnitude = Fn.magnitude * coefficientOfFriction;
+
+                        Vector3 Ff = velARelativeToBProjectedOntoPlane.normalized * frictionMagnitude;
+                    }
                 }
             }
         }
@@ -132,16 +171,30 @@ public class AngryFizziks : MonoBehaviour
         float positionAlongNormal = Vector3.Dot(planeToSphere, plane.Normal());
         float distanceToPlane = Mathf.Abs(positionAlongNormal);
 
-        float overlap = sphere.radius - positionAlongNormal;
-
-        if (overlap < 0)
+        if (plane.isHalfspace)
         {
-            return new CollisionInfo(true, plane.Normal());
+            float overlapHalfspace = sphere.radius - positionAlongNormal;
+            
+            if (overlapHalfspace < 0)
+            {
+                return new CollisionInfo(false, Vector3.zero);
+            }
+
+            Vector3 mtvHalfspace = plane.Normal() * overlapHalfspace;
+            sphere.transform.position += mtvHalfspace;
         }
+        else
+        {
+            float overlap = sphere.radius - distanceToPlane;
 
-        Vector3 mtv = plane.Normal() * overlap;
-        sphere.transform.position += mtv;
+            if (overlap < 0)
+            {
+                return new CollisionInfo(true, plane.Normal());
+            }
 
+            Vector3 mtv = plane.Normal() * overlap;
+            sphere.transform.position += mtv;
+        }
         return new CollisionInfo(true, plane.Normal());
     }
 }
