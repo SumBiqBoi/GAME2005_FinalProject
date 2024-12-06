@@ -70,6 +70,9 @@ public class AngryFizziks : MonoBehaviour
             Vector3 newPos = shape.transform.position + shape.velocity * dT;
             shape.transform.position = newPos;
 
+            Debug.DrawRay(shape.transform.position, shape.velocity, Color.white);
+            Debug.DrawRay(shape.transform.position, Fg, Color.magenta);
+
             shape.netForce = Vector3.zero;
         }
     }
