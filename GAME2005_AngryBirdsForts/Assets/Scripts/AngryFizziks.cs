@@ -128,13 +128,38 @@ public class AngryFizziks : MonoBehaviour
 
                     if (velARelativeToBProjectedOntoPlane.sqrMagnitude > ridiculouslySmallNumber)
                     {
-                        float coefficientOfFriction = Mathf.Clamp01(correctedShapeA.grippyness * correctedShapeB.grippyness);
+                        float coefficientOfFriction = Mathf.Clamp01(correctedShapeA.grippiness * correctedShapeB.grippiness);
                         float frictionMagnitude = Fn.magnitude * coefficientOfFriction;
 
                         Vector3 Ff = velARelativeToBProjectedOntoPlane.normalized * frictionMagnitude;
 
                         correctedShapeA.netForce += Ff;
                         correctedShapeB.netForce -= Ff;
+                    }
+
+                    float velBRelativeToADotNormal = velDotNormal * -1;
+
+                    if (velBRelativeToADotNormal < -1)
+                    {
+                        float restitution;
+
+                        if (velBRelativeToADotNormal > -0.5f)
+                        {
+                            restitution = 0;
+                        }
+                        else
+                        {
+                            restitution = Mathf.Clamp01(correctedShapeA.bounciness * correctedShapeB.bounciness);
+                        }
+
+                        float deltaV1D = (1.0f + restitution) * velBRelativeToADotNormal;
+
+                        float impulse1D = deltaV1D * correctedShapeA.mass * correctedShapeB.mass / (correctedShapeA.mass + correctedShapeB.mass);
+
+                        Vector3 impulse3D = collisionInfo.normal * impulse1D;
+
+                        correctedShapeA.velocity += -impulse3D / correctedShapeA.mass;
+                        correctedShapeB.velocity +=  impulse3D / correctedShapeB.mass;
                     }
                 }
             }
