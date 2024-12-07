@@ -56,22 +56,24 @@ public class AngryFizziks : MonoBehaviour
         {
             Vector3 prevPos = shape.transform.position;
 
-            if (shape.isStatic)
-            {
-                continue;
-            }
-
             Vector3 Fg = GetGravityForce(shape);
             shape.netForce += Fg;
 
-            Vector3 accelerationThisFrame = shape.netForce / shape.mass;
+            if (!shape.isStatic)
+            {
+                Vector3 accelerationThisFrame = shape.netForce / shape.mass;
 
-            shape.velocity += accelerationThisFrame * dT;
-            Vector3 newPos = shape.transform.position + shape.velocity * dT;
-            shape.transform.position = newPos;
+                shape.velocity += accelerationThisFrame * dT;
+                Vector3 newPos = shape.transform.position + shape.velocity * dT;
+                shape.transform.position = newPos;
 
-            Debug.DrawRay(shape.transform.position, shape.velocity, Color.white);
-            Debug.DrawRay(shape.transform.position, Fg, Color.magenta);
+                Debug.DrawRay(shape.transform.position, shape.velocity, Color.white);
+                Debug.DrawRay(shape.transform.position, Fg, Color.magenta);
+            }
+            else
+            {
+                shape.velocity = Vector3.zero;
+            }
 
             shape.netForce = Vector3.zero;
         }
@@ -120,6 +122,7 @@ public class AngryFizziks : MonoBehaviour
                     correctedShapeA.netForce += Fn;
                     correctedShapeB.netForce -= Fn;
 
+                    // Friction
                     Vector3 velARelativeToB = correctedShapeB.velocity - correctedShapeA.velocity;
                     float velDotNormal = Vector3.Dot(velARelativeToB, collisionInfo.normal);
                     Vector3 velProjectedNormal = collisionInfo.normal * velDotNormal;
@@ -137,6 +140,7 @@ public class AngryFizziks : MonoBehaviour
                         correctedShapeB.netForce -= Ff;
                     }
 
+                    // Bounciness
                     float velBRelativeToADotNormal = velDotNormal * -1;
 
                     if (velBRelativeToADotNormal < -1)
