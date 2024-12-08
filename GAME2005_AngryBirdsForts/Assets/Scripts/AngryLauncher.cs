@@ -6,9 +6,13 @@ public class AngryLauncher : MonoBehaviour
 {
     [SerializeField] GameObject angryShapeSphere;
     [SerializeField] GameObject angryShapeSquare;
+    [SerializeField] GameObject angryShapeStaticSphere;
+    [SerializeField] GameObject angryShapeStaticSquare;
 
     public float launchSpeed = 1;
     public Vector3 startPosition;
+
+    private bool switchToSquare = false;
 
     void Start()
     {
@@ -26,9 +30,30 @@ public class AngryLauncher : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            AngryShapes shapes = Instantiate(angryShapeSphere).GetComponent<AngryShapes>();
-            shapes.transform.position = angryShapeSphere.transform.position;
-            shapes.velocity = launchShape * launchSpeed;
+            if (!switchToSquare)
+            {
+                angryShapeStaticSphere.SetActive(true);
+                angryShapeStaticSquare.SetActive(false);
+                AngryShapes shapes = Instantiate(angryShapeSphere).GetComponent<AngryShapes>();
+                shapes.transform.position = angryShapeSphere.transform.position;
+                shapes.velocity = launchShape * launchSpeed;
+            }
+            if (switchToSquare)
+            {
+                angryShapeStaticSphere.SetActive(false);
+                angryShapeStaticSquare.SetActive(true);
+                AngryShapes shapes = Instantiate(angryShapeSquare).GetComponent<AngryShapes>();
+                shapes.transform.position = angryShapeSphere.transform.position;
+                shapes.velocity = launchShape * launchSpeed;
+            }
         }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            switchToSquare = !switchToSquare;
+            angryShapeStaticSphere.SetActive(!switchToSquare);
+            angryShapeStaticSquare.SetActive(switchToSquare);
+        }
+        Debug.Log(switchToSquare);
     }
 }

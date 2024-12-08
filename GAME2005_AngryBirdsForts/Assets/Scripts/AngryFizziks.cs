@@ -312,8 +312,8 @@ public class AngryFizziks : MonoBehaviour
         }
         collisionNormalBToA = mtv;
 
-        squareA.transform.position += mtv * 0.5f;
-        squareB.transform.position -= mtv * 0.5f;
+        squareA.transform.position += mtv;
+        squareB.transform.position -= mtv;
 
         return new CollisionInfo(true, collisionNormalBToA);
     }
