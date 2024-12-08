@@ -239,43 +239,55 @@ public class AngryFizziks : MonoBehaviour
 
     public CollisionInfo CollideSquares(AngrySquare squareA, AngrySquare squareB)
     {
-        Vector3 displacementBToA = squareA.transform.position - squareB.transform.position;
+        Vector3 displacementAToB = squareB.transform.position - squareA.transform.position;
 
         Vector2 halfExtentTotal = squareA.HalfExtent() + squareB.HalfExtent();
 
-        if (Mathf.Abs(displacementBToA.x) > halfExtentTotal.x || Mathf.Abs(displacementBToA.y)  > halfExtentTotal.y)
+        if (Mathf.Abs(displacementAToB.x) > halfExtentTotal.x || Mathf.Abs(displacementAToB.y)  > halfExtentTotal.y)
         {
             return new CollisionInfo(false, Vector3.zero);
         }
-        squareA.halfExtent = new Vector2(squareA.width / 2, squareA.height / 2);
-        squareB.halfExtent = new Vector2(squareB.width / 2, squareB.height / 2);
 
-        float collisionNormalBToAX;
-        float collisionNormalBToAY;
-
-        float widthAdd = squareA.width + squareB.width;
-        float heightAdd = squareA.height + squareB.height;
+        float widthTotal = (squareA.width + squareB.width) / 2;
+        float heightTotal = (squareA.height + squareB.height) / 2;
 
         Vector3 collisionNormalBToA;
 
         Vector3 mtv;
 
-        collisionNormalBToAX = Mathf.Abs(displacementBToA.x - widthAdd / 2);
-        collisionNormalBToAY = Mathf.Abs(displacementBToA.y - heightAdd / 2);
-        if (collisionNormalBToAX < collisionNormalBToAY)
+        float collisionNormalBToAX;
+        float collisionNormalBToAY;
+
+        if (Mathf.Abs(displacementAToB.x) > Mathf.Abs(displacementAToB.y))
         {
+            if (displacementAToB.x < 0)
+            {
+                collisionNormalBToAX = displacementAToB.x + widthTotal;
+            }
+            else
+            {
+                collisionNormalBToAX = displacementAToB.x - widthTotal;
+            }
+
             mtv = new Vector3(collisionNormalBToAX, 0, 0);
         }
         else
         {
-            mtv = new Vector3(0, collisionNormalBToAY, 0);
+            if (displacementAToB.y < 0)
+            {
+                collisionNormalBToAY = displacementAToB.y + heightTotal;
+            }
+            else
+            {
+                collisionNormalBToAY = displacementAToB.y - heightTotal;
+            }
+
+            mtv = new Vector3(0, collisionNormalBToAY, 0);   
         }
-        
         collisionNormalBToA = mtv;
 
         squareA.transform.position += mtv * 0.5f;
         squareB.transform.position -= mtv * 0.5f;
-
 
         return new CollisionInfo(true, collisionNormalBToA);
     }
