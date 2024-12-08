@@ -307,30 +307,49 @@ public class AngryFizziks : MonoBehaviour
         float clampedPointX = Mathf.Clamp(sphere.transform.position.x, square.transform.position.x - square.HalfExtent().x, square.transform.position.x + square.HalfExtent().x);
         float clampedPointY = Mathf.Clamp(sphere.transform.position.y, square.transform.position.y - square.HalfExtent().y, square.transform.position.y + square.HalfExtent().y);
 
-        Vector3 squareToSphere = new Vector3(clampedPointX - sphere.transform.position.x, clampedPointY - sphere.transform.position.y, 0);
+        Vector3 sphereToClampedPointDistance = new Vector3(clampedPointX - sphere.transform.position.x, clampedPointY - sphere.transform.position.y, 0);
+        Vector3 sphereToSquareDistance = square.transform.position - sphere.transform.position;
         Vector3 sphereRadiusSquareExtentTotal = new Vector3(sphere.radius + square.HalfExtent().x, sphere.radius + square.HalfExtent().y, 0);
 
-        if (squareToSphere.x > sphereRadiusSquareExtentTotal.x || squareToSphere.y > sphereRadiusSquareExtentTotal.y)
+        if (Mathf.Abs(sphereToSquareDistance.x) > sphereRadiusSquareExtentTotal.x || Mathf.Abs(sphereToSquareDistance.y) > sphereRadiusSquareExtentTotal.y)
         {
             return new CollisionInfo(false, Vector3.zero);
         }
 
         Vector3 mtv;
 
-        float overlapX = clampedPointX - sphere.transform.position.x;
-        float overlapY = clampedPointY - sphere.transform.position.y;
+        float overlapX;
+        float overlapY;
 
-        if (overlapX > overlapY)
+        if (Mathf.Abs(sphereToSquareDistance.x) > Mathf.Abs(sphereToSquareDistance.y))
         {
+            if (sphereToSquareDistance.x < 0)
+            {
+                overlapX = sphereToClampedPointDistance.x + sphere.radius;
+            }
+            else
+            {
+                overlapX = sphereToClampedPointDistance.x - sphere.radius;
+            }
+
             mtv = new Vector3(overlapX, 0, 0);
         }
         else
         {
+            if (sphereToSquareDistance.y < 0)
+            {
+                overlapY = sphereToClampedPointDistance.y + sphere.radius;
+            }
+            else
+            {
+                overlapY = sphereToClampedPointDistance.y - sphere.radius;
+            }
+
             mtv = new Vector3(0, overlapY, 0);
         }
 
-        sphere.transform.position += mtv;
-        square.transform.position -= mtv;
+        sphere.transform.position += mtv * 0.5f;
+        square.transform.position -= mtv * 0.5f;
 
         return new CollisionInfo(true, mtv);
     }
