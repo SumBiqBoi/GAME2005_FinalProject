@@ -98,10 +98,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeTypes: {fileID: 0}
-  mass: 1
+  mass: 2
   gravityScale: 1
   grippiness: 0.5
-  bounciness: 0.5
+  bounciness: 0.6
   velocity: {x: 0, y: 0, z: 0}
   netForce: {x: 0, y: 0, z: 0}
   isStatic: 0

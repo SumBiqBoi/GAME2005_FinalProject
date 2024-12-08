@@ -63,6 +63,12 @@ public class AngryFizziks : MonoBehaviour
             {
                 Vector3 accelerationThisFrame = shape.netForce / shape.mass;
 
+                Vector3 momentum = shape.velocity * shape.mass;
+                if (momentum.magnitude < 0.01f)
+                {
+                    shape.velocity = Vector3.zero;
+                }
+
                 shape.velocity += accelerationThisFrame * dT;
                 Vector3 newPos = shape.transform.position + shape.velocity * dT;
                 shape.transform.position = newPos;
@@ -110,11 +116,11 @@ public class AngryFizziks : MonoBehaviour
                     correctedShapeB = shapeA;
                     collisionInfo = CollideSpherePlane((AngrySphere)shapeB.shapeTypes, (AngryPlane)shapeA.shapeTypes);
                 }
-                if (shapeA.shapeTypes.GetShape() == AngrySquare.Shape.Square && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
+                else if (shapeA.shapeTypes.GetShape() == AngrySquare.Shape.Square && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
                 {
                     collisionInfo = CollideSquares((AngrySquare)shapeA.shapeTypes, (AngrySquare)shapeB.shapeTypes);
                 }
-                if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Sphere && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
+                else if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Sphere && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
                 {
                     collisionInfo = CollideSphereSquare((AngrySphere)shapeA.shapeTypes, (AngrySquare)shapeB.shapeTypes);
                 }
@@ -123,6 +129,16 @@ public class AngryFizziks : MonoBehaviour
                     correctedShapeA = shapeB;
                     correctedShapeB = shapeA;
                     collisionInfo = CollideSphereSquare((AngrySphere)shapeB.shapeTypes, (AngrySquare)shapeA.shapeTypes);
+                }
+                else if (shapeA.shapeTypes.GetShape() == AngrySquare.Shape.Square && shapeB.shapeTypes.GetShape() == AngrySphere.Shape.Plane)
+                {
+                    collisionInfo = CollideSquarePlane((AngrySquare)shapeA.shapeTypes, (AngryPlane)shapeB.shapeTypes);
+                }
+                else if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Plane && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
+                {
+                    correctedShapeA = shapeB;
+                    correctedShapeB = shapeA;
+                    collisionInfo = CollideSquarePlane((AngrySquare)shapeB.shapeTypes, (AngryPlane)shapeA.shapeTypes);
                 }
 
                 if (collisionInfo.didCollide)
@@ -352,5 +368,38 @@ public class AngryFizziks : MonoBehaviour
         square.transform.position -= mtv * 0.5f;
 
         return new CollisionInfo(true, mtv);
+    }
+
+    public CollisionInfo CollideSquarePlane(AngrySquare square, AngryPlane plane)
+    {
+        Vector3 planeToSquare = square.transform.position - plane.transform.position;
+        float positionAlongNormal = Vector3.Dot(planeToSquare, plane.Normal());
+        float distanceToPlane = Mathf.Abs(positionAlongNormal);
+
+        if (plane.isHalfspace)
+        {
+            float overlapHalfspace = square.width / 2 - positionAlongNormal;
+
+            if (overlapHalfspace < 0)
+            {
+                return new CollisionInfo(false, Vector3.zero);
+            }
+
+            Vector3 mtvHalfspace = plane.Normal() * overlapHalfspace;
+            square.transform.position += mtvHalfspace;
+        }
+        else
+        {
+            float overlap = square.width / 2 - distanceToPlane;
+
+            if (overlap < 0)
+            {
+                return new CollisionInfo(false, plane.Normal());
+            }
+
+            Vector3 mtv = plane.Normal() * overlap;
+            square.transform.position += mtv;
+        }
+        return new CollisionInfo(true, plane.Normal());
     }
 }
