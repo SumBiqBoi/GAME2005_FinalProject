@@ -114,6 +114,16 @@ public class AngryFizziks : MonoBehaviour
                 {
                     collisionInfo = CollideSquares((AngrySquare)shapeA.shapeTypes, (AngrySquare)shapeB.shapeTypes);
                 }
+                if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Sphere && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
+                {
+                    collisionInfo = CollideSphereSquare((AngrySphere)shapeA.shapeTypes, (AngrySquare)shapeB.shapeTypes);
+                }
+                else if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Square && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Sphere)
+                {
+                    correctedShapeA = shapeB;
+                    correctedShapeB = shapeA;
+                    collisionInfo = CollideSphereSquare((AngrySphere)shapeB.shapeTypes, (AngrySquare)shapeA.shapeTypes);
+                }
 
                 if (collisionInfo.didCollide)
                 {
@@ -290,5 +300,38 @@ public class AngryFizziks : MonoBehaviour
         squareB.transform.position -= mtv * 0.5f;
 
         return new CollisionInfo(true, collisionNormalBToA);
+    }
+
+    public CollisionInfo CollideSphereSquare(AngrySphere sphere, AngrySquare square)
+    {
+        float clampedPointX = Mathf.Clamp(sphere.transform.position.x, square.transform.position.x - square.HalfExtent().x, square.transform.position.x + square.HalfExtent().x);
+        float clampedPointY = Mathf.Clamp(sphere.transform.position.y, square.transform.position.y - square.HalfExtent().y, square.transform.position.y + square.HalfExtent().y);
+
+        Vector3 squareToSphere = new Vector3(clampedPointX - sphere.transform.position.x, clampedPointY - sphere.transform.position.y, 0);
+        Vector3 sphereRadiusSquareExtentTotal = new Vector3(sphere.radius + square.HalfExtent().x, sphere.radius + square.HalfExtent().y, 0);
+
+        if (squareToSphere.x > sphereRadiusSquareExtentTotal.x || squareToSphere.y > sphereRadiusSquareExtentTotal.y)
+        {
+            return new CollisionInfo(false, Vector3.zero);
+        }
+
+        Vector3 mtv;
+
+        float overlapX = clampedPointX - sphere.transform.position.x;
+        float overlapY = clampedPointY - sphere.transform.position.y;
+
+        if (overlapX > overlapY)
+        {
+            mtv = new Vector3(overlapX, 0, 0);
+        }
+        else
+        {
+            mtv = new Vector3(0, overlapY, 0);
+        }
+
+        sphere.transform.position += mtv;
+        square.transform.position -= mtv;
+
+        return new CollisionInfo(true, mtv);
     }
 }
