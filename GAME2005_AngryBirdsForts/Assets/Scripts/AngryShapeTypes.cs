@@ -7,6 +7,7 @@ public abstract class AngryShapeTypes : MonoBehaviour
     public enum Shape
     {
         Sphere,
+        Square,
         Plane,
         Halfspace
     }

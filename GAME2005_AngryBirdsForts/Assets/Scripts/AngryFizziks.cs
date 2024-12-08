@@ -110,6 +110,10 @@ public class AngryFizziks : MonoBehaviour
                     correctedShapeB = shapeA;
                     collisionInfo = CollideSpherePlane((AngrySphere)shapeB.shapeTypes, (AngryPlane)shapeA.shapeTypes);
                 }
+                if (shapeA.shapeTypes.GetShape() == AngrySquare.Shape.Square && shapeB.shapeTypes.GetShape() == AngrySquare.Shape.Square)
+                {
+                    collisionInfo = CollideSquares((AngrySquare)shapeA.shapeTypes, (AngrySquare)shapeB.shapeTypes);
+                }
 
                 if (collisionInfo.didCollide)
                 {
@@ -231,5 +235,48 @@ public class AngryFizziks : MonoBehaviour
             sphere.transform.position += mtv;
         }
         return new CollisionInfo(true, plane.Normal());
+    }
+
+    public CollisionInfo CollideSquares(AngrySquare squareA, AngrySquare squareB)
+    {
+        Vector3 displacementBToA = squareA.transform.position - squareB.transform.position;
+
+        Vector2 halfExtentTotal = squareA.HalfExtent() + squareB.HalfExtent();
+
+        if (Mathf.Abs(displacementBToA.x) > halfExtentTotal.x || Mathf.Abs(displacementBToA.y)  > halfExtentTotal.y)
+        {
+            return new CollisionInfo(false, Vector3.zero);
+        }
+        squareA.halfExtent = new Vector2(squareA.width / 2, squareA.height / 2);
+        squareB.halfExtent = new Vector2(squareB.width / 2, squareB.height / 2);
+
+        float collisionNormalBToAX;
+        float collisionNormalBToAY;
+
+        float widthAdd = squareA.width + squareB.width;
+        float heightAdd = squareA.height + squareB.height;
+
+        Vector3 collisionNormalBToA;
+
+        Vector3 mtv;
+
+        collisionNormalBToAX = Mathf.Abs(displacementBToA.x - widthAdd / 2);
+        collisionNormalBToAY = Mathf.Abs(displacementBToA.y - heightAdd / 2);
+        if (collisionNormalBToAX < collisionNormalBToAY)
+        {
+            mtv = new Vector3(collisionNormalBToAX, 0, 0);
+        }
+        else
+        {
+            mtv = new Vector3(0, collisionNormalBToAY, 0);
+        }
+        
+        collisionNormalBToA = mtv;
+
+        squareA.transform.position += mtv * 0.5f;
+        squareB.transform.position -= mtv * 0.5f;
+
+
+        return new CollisionInfo(true, collisionNormalBToA);
     }
 }

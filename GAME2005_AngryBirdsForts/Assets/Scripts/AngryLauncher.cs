@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class AngryLauncher : MonoBehaviour
 {
-    [SerializeField] GameObject angryShape;
+    [SerializeField] GameObject angryShapeSphere;
+    [SerializeField] GameObject angryShapeSquare;
 
     public float launchSpeed = 1;
     public Vector3 startPosition;
@@ -12,7 +13,7 @@ public class AngryLauncher : MonoBehaviour
     void Start()
     {
         startPosition = new Vector3(transform.position.x, transform.position.y + transform.localScale.y, transform.position.z);
-        angryShape.transform.position = startPosition;
+        angryShapeSphere.transform.position = startPosition;
     }
 
     void Update()
@@ -20,13 +21,13 @@ public class AngryLauncher : MonoBehaviour
         Vector3 mouse = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouse.z = 0.0f;
 
-        Vector3 launchShape = angryShape.transform.position - mouse;
-        Debug.DrawLine(mouse, angryShape.transform.position, Color.cyan);
+        Vector3 launchShape = angryShapeSphere.transform.position - mouse;
+        Debug.DrawLine(mouse, angryShapeSphere.transform.position, Color.cyan);
 
         if (Input.GetMouseButtonDown(0))
         {
-            AngryShapes shapes = Instantiate(angryShape).GetComponent<AngryShapes>();
-            shapes.transform.position = angryShape.transform.position;
+            AngryShapes shapes = Instantiate(angryShapeSphere).GetComponent<AngryShapes>();
+            shapes.transform.position = angryShapeSphere.transform.position;
             shapes.velocity = launchShape * launchSpeed;
         }
     }
