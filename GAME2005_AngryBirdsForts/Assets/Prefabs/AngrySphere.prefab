@@ -102,9 +102,11 @@ MonoBehaviour:
   gravityScale: 1
   grippiness: 0.5
   bounciness: 0.6
+  toughness: 10000
   velocity: {x: 0, y: 0, z: 0}
   netForce: {x: 0, y: 0, z: 0}
   isStatic: 0
+  isPig: 0
 --- !u!114 &9138281394638034520
 MonoBehaviour:
   m_ObjectHideFlags: 0

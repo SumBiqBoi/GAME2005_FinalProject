@@ -101,7 +101,10 @@ public class AngryFizziks : MonoBehaviour
                 if (shapeA == shapeB) continue;
 
                 CollisionInfo collisionInfo = new CollisionInfo(false, Vector3.zero);
-
+                if (shapeA.isPig)
+                {
+                    CollidePigShape(shapeA, shapeB);
+                }
                 if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Sphere && shapeB.shapeTypes.GetShape() == AngrySphere.Shape.Sphere)
                 {
                     collisionInfo = CollideSpheres((AngrySphere)shapeA.shapeTypes, (AngrySphere)shapeB.shapeTypes);
@@ -140,7 +143,6 @@ public class AngryFizziks : MonoBehaviour
                     correctedShapeB = shapeA;
                     collisionInfo = CollideSquarePlane((AngrySquare)shapeB.shapeTypes, (AngryPlane)shapeA.shapeTypes);
                 }
-
                 if (collisionInfo.didCollide)
                 {
                     Vector3 Fg = GetGravityForce(correctedShapeA);
@@ -378,7 +380,7 @@ public class AngryFizziks : MonoBehaviour
 
         if (plane.isHalfspace)
         {
-            float overlapHalfspace = square.width / 2 - positionAlongNormal;
+            float overlapHalfspace = square.height / 2 - positionAlongNormal;
 
             if (overlapHalfspace < 0)
             {
@@ -390,7 +392,7 @@ public class AngryFizziks : MonoBehaviour
         }
         else
         {
-            float overlap = square.width / 2 - distanceToPlane;
+            float overlap = square.height / 2 - distanceToPlane;
 
             if (overlap < 0)
             {
@@ -401,5 +403,17 @@ public class AngryFizziks : MonoBehaviour
             square.transform.position += mtv;
         }
         return new CollisionInfo(true, plane.Normal());
+    }
+
+    public void CollidePigShape(AngryShapes pig, AngryShapes shapes)
+    {
+        Vector3 pigMomentum = pig.velocity * pig.mass;
+        Vector3 shapeMomentum = shapes.velocity * shapes.mass;
+
+        if (pigMomentum.magnitude + shapeMomentum.magnitude >= pig.toughness)
+        {
+            AngryFizziks.Instance.angryShapesList.Remove(pig);
+            Destroy(pig.gameObject);
+        }
     }
 }

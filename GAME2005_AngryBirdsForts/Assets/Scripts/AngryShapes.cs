@@ -11,11 +11,13 @@ public class AngryShapes : MonoBehaviour
     public float gravityScale = 0;
     public float grippiness = 0.5f;
     public float bounciness = 0.5f;
+    public float toughness = 100000;
 
     public Vector3 velocity = Vector3.zero;
     public Vector3 netForce = Vector3.zero;
 
     public bool isStatic = false;
+    public bool isPig = false;
     void Start()
     {
         shapeTypes = GetComponent<AngryShapeTypes>();

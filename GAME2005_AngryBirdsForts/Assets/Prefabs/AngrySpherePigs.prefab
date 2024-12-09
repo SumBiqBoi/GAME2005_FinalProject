@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &6314524419256822522
+--- !u!1 &2788458985996993611
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,48 +8,48 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7377299547059469615}
-  - component: {fileID: 2472094776225319248}
-  - component: {fileID: 142115932083415290}
-  - component: {fileID: 2841909451723045089}
-  - component: {fileID: 2293928614857053779}
+  - component: {fileID: 1485594183926826508}
+  - component: {fileID: 4548012146769947079}
+  - component: {fileID: 82312967940682043}
+  - component: {fileID: 2236092503940750399}
+  - component: {fileID: 6103177956797919552}
   m_Layer: 0
-  m_Name: AngryPlane
+  m_Name: AngrySpherePigs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7377299547059469615
+--- !u!4 &1485594183926826508
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6314524419256822522}
+  m_GameObject: {fileID: 2788458985996993611}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 20, y: 1, z: 1}
+  m_LocalPosition: {x: 14.36188, y: 18.22, z: 0}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2472094776225319248
+--- !u!33 &4548012146769947079
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6314524419256822522}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &142115932083415290
+  m_GameObject: {fileID: 2788458985996993611}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!23 &82312967940682043
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6314524419256822522}
+  m_GameObject: {fileID: 2788458985996993611}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -63,7 +63,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b89dfd84437be8949a24b7c0c6e29a19, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,38 +85,38 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2841909451723045089
+--- !u!114 &2236092503940750399
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6314524419256822522}
+  m_GameObject: {fileID: 2788458985996993611}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f2f836a53c399b4e872b7013b9cd8fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   shapeTypes: {fileID: 0}
-  mass: 100000
-  gravityScale: 0
+  mass: 2
+  gravityScale: 1
   grippiness: 0.5
-  bounciness: 1
-  toughness: 10000
+  bounciness: 0.6
+  toughness: 70
   velocity: {x: 0, y: 0, z: 0}
   netForce: {x: 0, y: 0, z: 0}
-  isStatic: 1
-  isPig: 0
---- !u!114 &2293928614857053779
+  isStatic: 0
+  isPig: 1
+--- !u!114 &6103177956797919552
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6314524419256822522}
+  m_GameObject: {fileID: 2788458985996993611}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a5c2d9847f690145b15bad08ad569d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 006a3675709deff4da15a19ff8a77e75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isHalfspace: 0
+  radius: 2
