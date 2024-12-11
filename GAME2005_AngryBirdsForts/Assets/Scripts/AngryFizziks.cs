@@ -54,8 +54,6 @@ public class AngryFizziks : MonoBehaviour
     {
         foreach (AngryShapes shape in angryShapesList)
         {
-            Vector3 prevPos = shape.transform.position;
-
             Vector3 Fg = GetGravityForce(shape);
             shape.netForce += Fg;
 
@@ -101,10 +99,7 @@ public class AngryFizziks : MonoBehaviour
                 if (shapeA == shapeB) continue;
 
                 CollisionInfo collisionInfo = new CollisionInfo(false, Vector3.zero);
-                if (shapeA.isPig)
-                {
-                    CollidePigShape(shapeA, shapeB);
-                }
+
                 if (shapeA.shapeTypes.GetShape() == AngrySphere.Shape.Sphere && shapeB.shapeTypes.GetShape() == AngrySphere.Shape.Sphere)
                 {
                     collisionInfo = CollideSpheres((AngrySphere)shapeA.shapeTypes, (AngrySphere)shapeB.shapeTypes);
@@ -145,6 +140,11 @@ public class AngryFizziks : MonoBehaviour
                 }
                 if (collisionInfo.didCollide)
                 {
+                    if (shapeA.isPig)
+                    {
+                        CollidePigShape(shapeA, shapeB);
+                    }
+
                     Vector3 Fg = GetGravityForce(correctedShapeA);
 
                     float gravityDotNormal = Vector3.Dot(Fg, collisionInfo.normal);
@@ -267,57 +267,36 @@ public class AngryFizziks : MonoBehaviour
 
     public CollisionInfo CollideSquares(AngrySquare squareA, AngrySquare squareB)
     {
-        Vector3 displacementAToB = squareB.transform.position - squareA.transform.position;
+        float squareAMinX = squareA.transform.position.x - squareA.HalfExtent().x;
+        float squareAMaxX = squareA.transform.position.x + squareA.HalfExtent().x;
+        float squareAMinY = squareA.transform.position.y - squareA.HalfExtent().y;
+        float squareAMaxY = squareA.transform.position.y + squareA.HalfExtent().y;
 
-        Vector2 halfExtentTotal = squareA.HalfExtent() + squareB.HalfExtent();
+        float squareBMinX = squareB.transform.position.x - squareB.HalfExtent().x;
+        float squareBMaxX = squareB.transform.position.x + squareB.HalfExtent().x;
+        float squareBMinY = squareB.transform.position.y - squareB.HalfExtent().y;
+        float squareBMaxY = squareB.transform.position.y + squareB.HalfExtent().y;
 
-        if (Mathf.Abs(displacementAToB.x) > halfExtentTotal.x || Mathf.Abs(displacementAToB.y)  > halfExtentTotal.y)
+        
+        if ((squareAMinX > squareBMaxX || squareAMaxX < squareBMinX) || (squareAMinY > squareBMaxY || squareAMaxY < squareBMinY))
         {
             return new CollisionInfo(false, Vector3.zero);
         }
 
-        float widthTotal = (squareA.width + squareB.width) / 2;
-        float heightTotal = (squareA.height + squareB.height) / 2;
+        float AMinXSubBMaxX = Mathf.Abs(squareAMinX - squareBMaxX);
+        float AMaxXSubBMinX = Mathf.Abs(squareAMaxX - squareBMinX);
+        float AMinYSubBMaxY = Mathf.Abs(squareAMinY - squareBMaxY);
+        float AMaxYSubBMinY = Mathf.Abs(squareAMaxY - squareBMinY);
 
-        Vector3 collisionNormalBToA;
+        float XResult = AMinXSubBMaxX < (squareA.HalfExtent().x + squareB.HalfExtent().x) ? squareBMaxX - squareAMinX : squareBMinX - squareAMaxX;
+        float YResult = AMinYSubBMaxY < (squareA.HalfExtent().y + squareB.HalfExtent().y) ? squareBMaxY - squareAMinY : squareBMinY - squareAMaxY;
 
-        Vector3 mtv;
-
-        float collisionNormalBToAX;
-        float collisionNormalBToAY;
-
-        if (Mathf.Abs(displacementAToB.x) > Mathf.Abs(displacementAToB.y))
-        {
-            if (displacementAToB.x < 0)
-            {
-                collisionNormalBToAX = displacementAToB.x + widthTotal;
-            }
-            else
-            {
-                collisionNormalBToAX = displacementAToB.x - widthTotal;
-            }
-
-            mtv = new Vector3(collisionNormalBToAX, 0, 0);
-        }
-        else
-        {
-            if (displacementAToB.y < 0)
-            {
-                collisionNormalBToAY = displacementAToB.y + heightTotal;
-            }
-            else
-            {
-                collisionNormalBToAY = displacementAToB.y - heightTotal;
-            }
-
-            mtv = new Vector3(0, collisionNormalBToAY, 0);   
-        }
-        collisionNormalBToA = mtv;
+        Vector3 mtv = Mathf.Abs(XResult) < Mathf.Abs(YResult) ? new Vector3(XResult, 0, 0) : new Vector3(0, YResult, 0);
 
         squareA.transform.position += mtv;
         squareB.transform.position -= mtv;
 
-        return new CollisionInfo(true, collisionNormalBToA);
+        return new CollisionInfo(true, mtv);
     }
 
     public CollisionInfo CollideSphereSquare(AngrySphere sphere, AngrySquare square)

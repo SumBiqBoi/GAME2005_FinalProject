@@ -248,6 +248,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AngrySquare (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 2037683435018738076, guid: 9b0754ede72bdcc47875eb61ea96f152, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2386129986165065648, guid: 9b0754ede72bdcc47875eb61ea96f152, type: 3}
       propertyPath: width
       value: 20
@@ -829,6 +833,10 @@ PrefabInstance:
     - target: {fileID: 2037683435018738076, guid: 9b0754ede72bdcc47875eb61ea96f152, type: 3}
       propertyPath: m_Name
       value: AngrySquare (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2037683435018738076, guid: 9b0754ede72bdcc47875eb61ea96f152, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6625685618651473700, guid: 9b0754ede72bdcc47875eb61ea96f152, type: 3}
       propertyPath: mass
